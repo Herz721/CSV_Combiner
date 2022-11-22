@@ -1,11 +1,20 @@
 # CSV Combiner
-
 Write a command line program that takes several CSV files as arguments. Each CSV
 file (found in the `fixtures` directory of this repo) will have the same
 columns. Your script should output a new CSV file to `stdout` that contains the
 rows from each of the inputs along with an additional column that has the
 filename from which the row came (only the file's basename, not the entire path).
 Use `filename` as the header for the additional column.
+
+## Usage
+* CSV_Combiner.py:
+```
+$ python3 CSV_Combiner.py input_file_1 input_file_2 ... input_file_n output_file
+```
+* test_combiner.py:
+```
+$ python3 test_combiner.py
+```
 
 ##  Considerations
 * You should use coding best practices. Your code should be re-usable and extensible.
@@ -18,7 +27,7 @@ able to handle more than two inputs, inputs with different columns, and very lar
 files gracefully.
 
 ```
-$ ./csv-combiner.php ./fixtures/accessories.csv ./fixtures/clothing.csv > combined.csv
+$ python3 CSV_Combiner.py ./fixtures/accessories.csv ./fixtures/clothing.csv combined.csv
 ```
 
 Given two input files named `clothing.csv` and `accessories.csv`.

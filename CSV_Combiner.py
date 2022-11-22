@@ -15,6 +15,7 @@ class CSV_Combiner:
 
     file_list = []
     output_file = str()
+    # deal with large csv file
     CHUNK_SIZE = 50000
 
     def _check_inputs(self, args):
@@ -24,10 +25,11 @@ class CSV_Combiner:
             args (list): command line args
         """
         if len(args) <= 2:
-            print("ERROR: invalid input!")
-            print("eg. python3 CSV_Combiner.py input_path_1 input_path_2 ... input_path_n output_path")
-            sys.exit()
-        return
+            with open(args[-1], 'w') as f:
+                print("ERROR: invalid input!", file = f)
+                print("eg. python3 CSV_Combiner.py input_path_1 input_path_2 ... input_path_n output_path", file = f)
+                sys.exit(1)
+        return args[:-1], args[-1]
 
     def _read_csv(self):
         """read csv files in CHUNK_SIZE
@@ -40,11 +42,14 @@ class CSV_Combiner:
             try:
                 csv_chunks = pd.read_csv(file, chunksize = self.CHUNK_SIZE)
             except FileNotFoundError:
-                print("ERROR: File Not Found!")
+                with open(self.output_file, 'w') as f:
+                    print("ERROR: File Not Found!", file = f)
+                    sys.exit(1)
             except pd.errors.EmptyDataError:
-                print("WARNING: Empty File!")
+                print("ERROR: Empty File!")
             else:
                 for chunk in csv_chunks:
+                    # append additional columns
                     csv_list.append(chunk.assign(filename = os.path.basename(file)))
         return csv_list
 
@@ -60,8 +65,9 @@ class CSV_Combiner:
         try:
             combined_data = pd.concat(csv_list, ignore_index = True)
         except ValueError:
-            print("Error: No Data!")
-            sys.exit()
+            with open(self.output_file, 'w') as f:
+                print("Error: No Data!", file = f)
+                sys.exit(1)
         else:
             return combined_data
 
@@ -71,7 +77,8 @@ class CSV_Combiner:
         Args:
             combined_csv (pd.dataFrame): combined data
         """
-        combined_csv.to_csv(self.output_file, index = False, chunksize = self.CHUNK_SIZE)
+        with open(self.output_file, 'w') as f:
+            print(combined_csv.to_csv(index = False, chunksize = self.CHUNK_SIZE), file = f)
         return
 
     def combine(self):
@@ -85,9 +92,11 @@ class CSV_Combiner:
     def __init__(self, args):
         """init class
         """
+        if len(args) < 1:
+            sys.exit(1)
         file_list, output_file = self._check_inputs(args)
-        self.file_list = file_list
         self.output_file = output_file
+        self.file_list = file_list
 
 def main():
     args = sys.argv

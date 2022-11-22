@@ -1,4 +1,5 @@
 env
 combined.csv
+__pycache__/
 fixtures/
 test.csv
