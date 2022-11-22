@@ -30,6 +30,17 @@ def main():
                 random.randint(100, 1000),
                 categories
             )
+    with open(path.join(DIR, 'fixtures', 'large_data.csv'), 'w', encoding='utf-8') as fh:
+                writer = csv.writer(fh, doublequote=False, escapechar='\\', quoting=csv.QUOTE_ALL)
+                writer.writerow(['email_hash', 'Price'])
+                length = 500,000
+                for i in range(0, length):
+                    writer.writerow([
+                        hashlib.sha256('tech+test{}@pmg.com'.format(i).encode('utf-8')).hexdigest(),
+                        random.choice(('10', '20')),
+                    ])
+    with open(path.join(DIR, 'fixtures', 'empty_file.csv'), 'w', encoding='utf-8') as fh:
+        pass
 
 
 if __name__ == '__main__':
